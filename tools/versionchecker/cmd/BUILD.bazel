@@ -2,6 +2,41 @@ load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
 
 go_binary(
     name = "versionchecker",
+    args = [
+        "--go-runfile",
+        "$(rlocationpath @go_sdk//:bin/go)",
+    ],
+    data = [
+        "@go_sdk//:bin/go",
+    ],
+    embed = [":versionchecker_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_binary(
+    name = "check-deps",
+    args = [
+        "--go-runfile",
+        "$(rlocationpath @go_sdk//:bin/go)",
+        "check",
+    ],
+    data = [
+        "@go_sdk//:bin/go",
+    ],
+    embed = [":versionchecker_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_binary(
+    name = "update-deps",
+    args = [
+        "--go-runfile",
+        "$(rlocationpath @go_sdk//:bin/go)",
+        "fix",
+    ],
+    data = [
+        "@go_sdk//:bin/go",
+    ],
     embed = [":versionchecker_lib"],
     visibility = ["//visibility:public"],
 )

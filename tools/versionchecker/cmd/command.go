@@ -2,7 +2,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -16,19 +15,40 @@ func newCommand(runner versionchecker.Runner) *cobra.Command {
 		SilenceUsage: true,
 	}
 	root.AddCommand(
-		newActionCommand("check", "Report version drift", runner.Check),
-		newActionCommand("fix", "Update drifted versions", runner.Fix),
+		newActionCommand("check", "Report version drift", runner),
+		newActionCommand("fix", "Update drifted versions", runner),
 	)
 	return root
 }
 
-func newActionCommand(name, description string, run func(context.Context) ([]versionchecker.Report, error)) *cobra.Command {
-	return &cobra.Command{
+func newActionCommand(name, description string, runner versionchecker.Runner) *cobra.Command {
+	selected := make(map[string]*bool, len(runner.Sources))
+	cmd := &cobra.Command{
 		Use:   name,
 		Short: description,
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			reports, err := run(cmd.Context())
+			all, _ := cmd.Flags().GetBool("all")
+			var sources []versionchecker.Source
+			for _, source := range runner.Sources {
+				if *selected[source.Name()] {
+					sources = append(sources, source)
+				}
+			}
+			if all && len(sources) > 0 {
+				return fmt.Errorf("--all cannot be combined with a source flag")
+			}
+			if all || len(sources) == 0 {
+				sources = runner.Sources
+			}
+			scoped := versionchecker.Runner{Sources: sources}
+			var reports []versionchecker.Report
+			var err error
+			if name == "fix" {
+				reports, err = scoped.Fix(cmd.Context())
+			} else {
+				reports, err = scoped.Check(cmd.Context())
+			}
 			if err != nil {
 				return err
 			}
@@ -38,4 +58,11 @@ func newActionCommand(name, description string, run func(context.Context) ([]ver
 			return nil
 		},
 	}
+	cmd.Flags().Bool("all", false, "Check or update every source (the default)")
+	for _, source := range runner.Sources {
+		flag := new(bool)
+		selected[source.Name()] = flag
+		cmd.Flags().BoolVar(flag, source.Name(), false, "Include "+source.Name()+" pins")
+	}
+	return cmd
 }

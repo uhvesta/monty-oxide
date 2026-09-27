@@ -6,6 +6,7 @@ go_library(
         "bazel.go",
         "bzlmod.go",
         "golang.go",
+        "gomod.go",
         "runner.go",
         "rust.go",
         "source.go",

@@ -159,7 +159,7 @@ func (b Bzlmod) Fix(_ context.Context, drift Drift) error {
 // FinishFix refreshes every module extension entry after all pins have changed.
 func (b Bzlmod) FinishFix(ctx context.Context) error {
 	if b.BazelBinary == "" {
-		b.BazelBinary = "bazel"
+		return fmt.Errorf("Bazel executable is not configured")
 	}
 	cmd := exec.CommandContext(ctx, b.BazelBinary, "mod", "deps", "--lockfile_mode=update")
 	cmd.Dir = b.Root
