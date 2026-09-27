@@ -1,0 +1,15 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "versions_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/uhvesta/monty-oxide/tools/cmd/versions",
+    visibility = ["//visibility:private"],
+    deps = ["//tools/internal/versions"],
+)
+
+go_binary(
+    name = "versions",
+    embed = [":versions_lib"],
+    visibility = ["//visibility:public"],
+)
