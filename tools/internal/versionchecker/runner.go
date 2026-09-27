@@ -51,6 +51,13 @@ func (r Runner) run(ctx context.Context, fix bool) ([]Report, error) {
 			}
 			reports = append(reports, Report{Source: source.Name(), Drift: drift})
 		}
+		if fix && len(drifts) > 0 {
+			if finisher, ok := source.(interface{ FinishFix(context.Context) error }); ok {
+				if err := finisher.FinishFix(ctx); err != nil {
+					return reports, fmt.Errorf("%s: finish fix: %w", source.Name(), err)
+				}
+			}
+		}
 	}
 	return reports, nil
 }

@@ -4,6 +4,7 @@ go_library(
     name = "versionchecker",
     srcs = [
         "bazel.go",
+        "bzlmod.go",
         "runner.go",
         "source.go",
     ],
