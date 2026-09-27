@@ -1,35 +1,10 @@
 # monty-oxide
 
-## Bootstrap
-
-### With direnv (suggested)
-
-Install [direnv](https://direnv.net/docs/installation.html). Then for zsh, add this
-line to `~/.zshrc`:
-
-```sh
-eval "$(direnv hook zsh)"
-```
-
-For bash, add this line to `~/.bashrc`:
-
-```sh
-eval "$(direnv hook bash)"
-```
-
-Restart your shell (or source the rc files), enter this repository, and follow
-the prompts to allow the hook. `bazel` is then on your path while you work in
-the repository.
-
-### Manual bootstrap
-
-From the repository root, run:
-
-```sh
-./tools/scripts/bootstrap/bazelisk.sh
-```
-
-1. The script supports macOS and Linux on x86-64 or ARM64.
-2. It downloads a pinned version of Bazelisk to `.tools/bin/bazelisk`.
-3. It creates `.tools/bin/bazel` as a link to it.
-4. Run `.tools/bin/bazel` directly if you do not use `direnv`.
+- **Bootstrap:** `sh tools/scripts/bootstrap/bazelisk.sh` installs pinned Bazelisk as `bazel` on macOS or Linux (x86-64 or ARM64). It reports newer releases without changing the pin.
+- **Automatic tools:** Install [direnv](https://direnv.net/docs/installation.html), add `eval "$(direnv hook zsh)"` or `eval "$(direnv hook bash)"` to your shell startup file, then run `direnv allow`. This adds the repository's Bazel, Go, Rust, and language servers to `PATH` while you are here.
+- **Manual tools:** Run `sh tools/scripts/bootstrap/devtools.sh` and add `.tools/bin` to `PATH` to use `bazel` without direnv. Tools and language servers live under ignored `.tools`.
+- **VS Code:** Run the setup script once and reload the window. `.vscode/settings.json` points the Go, Rust, and Bazel extensions at repository tools.
+- **Pinned versions:** Go comes from `go.mod`, Rust from `Cargo.toml`, Bazel from `.bazelversion`, and Bazelisk from its bootstrap script.
+- **Build and test:** `bazel build //...` and `bazel test //...`.
+- **Generate Go BUILD files:** `bazel run //:gazelle`.
+- **Format:** `bazel run //:format -- path/to/files`; check with `bazel run //:format.check -- path/to/files`.
