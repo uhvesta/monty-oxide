@@ -8,16 +8,69 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
+	"strconv"
 	"strings"
+
+	"github.com/bazelbuild/buildtools/build"
 )
 
-var bazelDep = regexp.MustCompile(`bazel_dep\s*\(\s*name\s*=\s*"([^"]+)"\s*,\s*version\s*=\s*"([^"]+)"\s*\)`)
+type modulePin struct {
+	name    string
+	version *build.StringExpr
+}
+
+func modulePins(path string, data []byte) ([]modulePin, error) {
+	file, err := build.ParseModule(path, data)
+	if err != nil {
+		return nil, err
+	}
+	var pins []modulePin
+	for _, statement := range file.Stmt {
+		call, ok := statement.(*build.CallExpr)
+		if !ok {
+			continue
+		}
+		function, ok := call.X.(*build.Ident)
+		if !ok || function.Name != "bazel_dep" {
+			continue
+		}
+		var name, version *build.StringExpr
+		for _, argument := range call.List {
+			assignment, ok := argument.(*build.AssignExpr)
+			if !ok {
+				continue
+			}
+			key, ok := assignment.LHS.(*build.Ident)
+			if !ok {
+				continue
+			}
+			value, ok := assignment.RHS.(*build.StringExpr)
+			if !ok && (key.Name == "name" || key.Name == "version") {
+				return nil, fmt.Errorf("bazel_dep %s must be a string literal", key.Name)
+			}
+			switch key.Name {
+			case "name":
+				name = value
+			case "version":
+				version = value
+			}
+		}
+		if name == nil {
+			return nil, fmt.Errorf("bazel_dep must have a name string literal")
+		}
+		if version == nil || version.Value == "" {
+			continue
+		}
+		pins = append(pins, modulePin{name: name.Value, version: version})
+	}
+	return pins, nil
+}
 
 // Bzlmod checks direct module pins against the Bazel Central Registry.
 type Bzlmod struct {
-	Root   string
-	Client *http.Client
+	Root        string
+	BazelBinary string
+	Client      *http.Client
 }
 
 func (Bzlmod) Name() string { return "bzlmod" }
@@ -27,13 +80,17 @@ func (b Bzlmod) Check(ctx context.Context) ([]Drift, error) {
 	if err != nil {
 		return nil, err
 	}
+	pins, err := modulePins(filepath.Join(b.Root, "MODULE.bazel"), data)
+	if err != nil {
+		return nil, err
+	}
 	client := b.Client
 	if client == nil {
 		client = http.DefaultClient
 	}
 	var drifts []Drift
-	for _, match := range bazelDep.FindAllStringSubmatch(string(data), -1) {
-		name, current := match[1], match[2]
+	for _, pin := range pins {
+		name, current := pin.name, pin.version.Value
 		request, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://bcr.bazel.build/modules/"+name+"/metadata.json", nil)
 		if err != nil {
 			return nil, err
@@ -78,17 +135,33 @@ func (b Bzlmod) Fix(_ context.Context, drift Drift) error {
 	if err != nil {
 		return err
 	}
-	old := fmt.Sprintf(`bazel_dep(name = %q, version = %q)`, drift.Name, drift.Current)
-	newPin := fmt.Sprintf(`bazel_dep(name = %q, version = %q)`, drift.Name, drift.Latest)
-	if !strings.Contains(string(data), old) {
-		return fmt.Errorf("%s pin changed since check", drift.Name)
+	pins, err := modulePins(path, data)
+	if err != nil {
+		return err
 	}
-	return os.WriteFile(path, []byte(strings.Replace(string(data), old, newPin, 1)), 0o644)
+	for _, pin := range pins {
+		if pin.name != drift.Name {
+			continue
+		}
+		if pin.version.Value != drift.Current {
+			return fmt.Errorf("%s pin changed since check", drift.Name)
+		}
+		start, end := pin.version.Span()
+		updated := make([]byte, 0, len(data)+len(drift.Latest)-len(drift.Current))
+		updated = append(updated, data[:start.Byte]...)
+		updated = append(updated, strconv.Quote(drift.Latest)...)
+		updated = append(updated, data[end.Byte:]...)
+		return os.WriteFile(path, updated, 0o644)
+	}
+	return fmt.Errorf("%s pin changed since check", drift.Name)
 }
 
 // FinishFix refreshes every module extension entry after all pins have changed.
 func (b Bzlmod) FinishFix(ctx context.Context) error {
-	cmd := exec.CommandContext(ctx, filepath.Join(b.Root, ".tools/bin/bazel"), "mod", "deps", "--lockfile_mode=update")
+	if b.BazelBinary == "" {
+		b.BazelBinary = "bazel"
+	}
+	cmd := exec.CommandContext(ctx, b.BazelBinary, "mod", "deps", "--lockfile_mode=update")
 	cmd.Dir = b.Root
 	output, err := cmd.CombinedOutput()
 	if err != nil {

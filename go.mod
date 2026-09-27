@@ -4,7 +4,10 @@ go 1.27.1
 
 tool golang.org/x/tools/gopls
 
-require github.com/spf13/cobra v1.10.2
+require (
+	github.com/bazelbuild/buildtools v0.0.0-20260904073137-eaa4d125b423
+	github.com/spf13/cobra v1.10.2
+)
 
 require (
 	github.com/BurntSushi/toml v1.6.0 // indirect

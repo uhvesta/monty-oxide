@@ -12,10 +12,14 @@ go_library(
     ],
     importpath = "github.com/uhvesta/monty-oxide/tools/versionchecker/internal",
     visibility = ["//tools/versionchecker/cmd:__pkg__"],
+    deps = ["@com_github_bazelbuild_buildtools//build"],
 )
 
 go_test(
     name = "versionchecker_test",
-    srcs = ["runner_test.go"],
+    srcs = [
+        "bzlmod_test.go",
+        "runner_test.go",
+    ],
     embed = [":versionchecker"],
 )
