@@ -85,3 +85,19 @@ fi
 
 ln -sfn bazelisk "$bin_dir/bazel"
 printf 'Bazelisk %s %s at %s\n' "$BAZELISK_VERSION" "$status" "$destination"
+
+# A release notice must not prevent the pinned Bazelisk from working offline.
+if command -v curl >/dev/null 2>&1; then
+  latest_url=$(curl --fail --location --silent --max-time 3 \
+    --output /dev/null --write-out '%{url_effective}' \
+    https://github.com/bazelbuild/bazelisk/releases/latest || :)
+  case "$latest_url" in
+    https://github.com/bazelbuild/bazelisk/releases/tag/v*)
+      latest_version=${latest_url##*/}
+      if [ "$latest_version" != "$BAZELISK_VERSION" ]; then
+        printf 'Latest Bazelisk release: %s (pinned: %s). See %s\n' \
+          "$latest_version" "$BAZELISK_VERSION" "$latest_url" >&2
+      fi
+      ;;
+  esac
+fi

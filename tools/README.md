@@ -52,6 +52,10 @@ From the repository root:
 .tools/bin/bazel run //:format.check -- path/to/files
 ```
 
+The Bazelisk bootstrap script reports when a different latest release is
+available. Its version and four platform checksums are pinned together near
+the top of `tools/scripts/bootstrap/bazelisk.sh`.
+
 Builds run the configured lint aspects for Rust, shell, Markdown, and Starlark
 targets. The formatter handles Rust, Go, shell, Markdown, and Starlark files.
 The `format_test` checks the live workspace for Go, Rust, shell, Markdown, and
