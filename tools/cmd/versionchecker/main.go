@@ -7,8 +7,17 @@ import (
 )
 
 func main() {
-	// Register concrete sources here as they are implemented.
-	if err := newCommand(versionchecker.Runner{}).Execute(); err != nil {
+	root := os.Getenv("BUILD_WORKSPACE_DIRECTORY")
+	if root == "" {
+		var err error
+		root, err = os.Getwd()
+		if err != nil {
+			os.Exit(1)
+		}
+	}
+	if err := newCommand(versionchecker.Runner{Sources: []versionchecker.Source{
+		versionchecker.Bazel{Root: root},
+	}}).Execute(); err != nil {
 		os.Exit(1)
 	}
 }
