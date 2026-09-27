@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "bazel.go",
         "bzlmod.go",
+        "golang.go",
         "runner.go",
         "source.go",
     ],

@@ -18,6 +18,7 @@ func main() {
 	if err := newCommand(versionchecker.Runner{Sources: []versionchecker.Source{
 		versionchecker.Bazel{Root: root},
 		versionchecker.Bzlmod{Root: root},
+		&versionchecker.Golang{Root: root},
 	}}).Execute(); err != nil {
 		os.Exit(1)
 	}
