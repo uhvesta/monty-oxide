@@ -6,6 +6,7 @@ _VALE_VERSION = "3.23.0"
 _RUMDL_VERSION = "0.2.77"
 _SHFMT_VERSION = "3.14.1"
 _BUILDIFIER_VERSION = "10.0.1"
+_STARPLS_VERSION = "0.1.22"
 
 _VALE = {
     "darwin_amd64": ("macOS_64-bit", "416fdd3ba32e32dc71c87b479cb86757bb6437bcebc7a3e4a095e863b7ce583d"),
@@ -33,6 +34,13 @@ _BUILDIFIER = {
     "darwin_arm64": "afb78f350319b59cc51d6add3a5f3ba68e63e5d88f68c5a9ea6328a07084d319",
     "linux_amd64": "e0ea28e2d639347724435ebafe0531fd764fbf20eec6a23000c81edd0d58e51d",
     "linux_arm64": "6d7aebd23aa85847a66d517bb6220d95f24a2752e62cce0f089145b680b539c7",
+}
+
+_STARPLS = {
+    "darwin_amd64": ("darwin-amd64", "97967f041d950c1055664a8f1afc36b01c6793b2fb3af488fd20139720d32131"),
+    "darwin_arm64": ("darwin-arm64", "675b7be4554e6c219b6774a6b814ec21061096e08ecdd8b8aeeaf3913eb20a4e"),
+    "linux_amd64": ("linux-amd64", "7c661cdde0d1c026665086d07523d825671e29056276681616bb32d0273c5eab"),
+    "linux_arm64": ("linux-aarch64", "55877ec4c3ff03e1d90d59c76f69a3a144b6c29688747c8ac4d77993e2eef1ad"),
 }
 
 def _archive_tool_impl(ctx):
@@ -66,6 +74,7 @@ def _host_tools_impl(module_ctx):
     vale_platform, vale_sha = _VALE[host_key]
     rumdl_platform, rumdl_sha = _RUMDL[host_key]
     shfmt_platform, shfmt_sha = _SHFMT[host_key]
+    starpls_platform, starpls_sha = _STARPLS[host_key]
 
     _archive_tool(
         name = "vale",
@@ -90,6 +99,12 @@ def _host_tools_impl(module_ctx):
         url = "https://github.com/bazelbuild/buildtools/releases/download/v{0}/buildifier-{1}".format(_BUILDIFIER_VERSION, host_key.replace("_", "-")),
         sha256 = _BUILDIFIER[host_key],
         binary = "buildifier",
+    )
+    _binary_tool(
+        name = "starpls",
+        url = "https://github.com/withered-magic/starpls/releases/download/v{0}/starpls-{1}".format(_STARPLS_VERSION, starpls_platform),
+        sha256 = starpls_sha,
+        binary = "starpls",
     )
     return module_ctx.extension_metadata(reproducible = True)
 

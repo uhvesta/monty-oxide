@@ -1,8 +1,32 @@
 # Repository tools
 
-Run `tools/scripts/bootstrap/bazelisk.sh` once to install Bazelisk under
-`.tools/bin`. The bootstrap supports macOS and Linux on x86-64 and ARM64.
-The repository's `direnv` setup adds that directory to `PATH` automatically.
+Allow the repository with `direnv allow` to install Bazelisk and run
+`bazel run //tools:install_devtools` automatically. The setup supports macOS
+and Linux on x86-64 and ARM64. Bazel prepares the pinned Go and Rust versions
+and builds `gopls`. The installer copies `gopls` and `starpls` into ignored
+`.tools/bin`. It links `rust-analyzer` and the complete Go and Rust
+distributions under `.tools/sdk` so their libraries and source files remain
+available.
+
+For manual setup from the repository root without `direnv`, run:
+
+```sh
+sh tools/scripts/bootstrap/bazelisk.sh
+.tools/bin/bazel run //tools:install_devtools
+PATH="$PWD/.tools/bin:$PWD/.tools/sdk/go/bin:$PWD/.tools/sdk/rust/bin:$PATH"
+export PATH
+export GOROOT="$PWD/.tools/sdk/go"
+export RUST_SRC_PATH="$PWD/.tools/sdk/rust-analyzer/lib/rustlib/src/library"
+```
+
+You can still run only `sh tools/scripts/bootstrap/bazelisk.sh` if you want
+just Bazelisk. `sh tools/scripts/bootstrap/devtools.sh` performs both setup
+steps and reuses the existing installation when its inputs have not changed.
+
+The available commands include `bazel`, `go`, `gofmt`, `cargo`, `rustc`,
+`rustfmt`, `gopls`, `rust-analyzer`, and `starpls` (the Starlark/Bazel LSP).
+The Rust version comes from `Cargo.toml`. The Go and `gopls` versions come
+from `go.mod`.
 
 From the repository root:
 
@@ -24,5 +48,5 @@ workspace package. The local extension that passes these values to
 `rules_rust` lives in `tools/rules/rust/toolchain.bzl`.
 
 The host tool extension selects one checked binary for each of Vale, `rumdl`,
-`shfmt`, and `buildifier` for the current OS and CPU. Bazel detects the host
-platform for builds automatically.
+`shfmt`, `buildifier`, and `starpls` for the current OS and CPU. Bazel detects
+the host platform for builds automatically.

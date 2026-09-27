@@ -13,10 +13,15 @@ bazel_dep(name = "toml.bzl", version = "0.4.1")
 # MARK: - Go
 
 go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
-go_sdk.from_file(go_mod = "//:go.mod")
+go_sdk.from_file(
+    name = "go_sdk",
+    go_mod = "//:go.mod",
+)
+use_repo(go_sdk, "go_sdk")
 
 go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
 go_deps.from_file(go_mod = "//:go.mod")
+use_repo(go_deps, "org_golang_x_tools", "org_golang_x_tools_gopls")
 
 # MARK: - Rust
 
@@ -28,4 +33,4 @@ register_toolchains("@rust_toolchains//:all")
 # MARK: - Host tooling
 
 host_tools = use_extension("//tools/rules/tooling:extensions.bzl", "host_tools")
-use_repo(host_tools, "buildifier", "rumdl", "shfmt", "vale")
+use_repo(host_tools, "buildifier", "rumdl", "shfmt", "starpls", "vale")

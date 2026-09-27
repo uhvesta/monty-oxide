@@ -1,4 +1,30 @@
-exports_files(["scripts/bootstrap/bazelisk.sh"])
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+
+exports_files([
+    "scripts/bootstrap/bazelisk.sh",
+    "scripts/bootstrap/devtools.sh",
+    "scripts/bootstrap/install_devtools.sh",
+])
+
+sh_binary(
+    name = "install_devtools",
+    srcs = ["scripts/bootstrap/install_devtools.sh"],
+    args = [
+        "$(rlocationpath @go_sdk//:bin/go)",
+        "$(rlocationpath @rules_rust//rust/toolchain:current_cargo_files)",
+        "$(rlocationpaths @rules_rust//rust/toolchain:current_rust_analyzer_toolchain)",
+        "$(rlocationpath @org_golang_x_tools_gopls//:gopls)",
+        "$(rlocationpath @starpls//:starpls)",
+    ],
+    data = [
+        "@go_sdk//:bin/go",
+        "@org_golang_x_tools_gopls//:gopls",
+        "@rules_rust//rust/toolchain:current_cargo_files",
+        "@rules_rust//rust/toolchain:current_rust_analyzer_toolchain",
+        "@starpls",
+    ],
+    tags = ["manual"],
+)
 
 filegroup(
     name = "markdown",
