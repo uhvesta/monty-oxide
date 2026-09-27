@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "bazel.go",
         "bzlmod.go",
+        "cargo.go",
         "golang.go",
         "gomod.go",
         "runner.go",
@@ -13,13 +14,17 @@ go_library(
     ],
     importpath = "github.com/uhvesta/monty-oxide/tools/versionchecker/internal",
     visibility = ["//tools/versionchecker/cmd:__pkg__"],
-    deps = ["@com_github_bazelbuild_buildtools//build"],
+    deps = [
+        "@com_github_bazelbuild_buildtools//build",
+        "@com_github_burntsushi_toml//:toml",
+    ],
 )
 
 go_test(
     name = "versionchecker_test",
     srcs = [
         "bzlmod_test.go",
+        "cargo_test.go",
         "runner_test.go",
     ],
     embed = [":versionchecker"],

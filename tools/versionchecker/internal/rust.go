@@ -6,12 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
-	"regexp"
 	"strings"
 )
-
-var workspaceRustVersion = regexp.MustCompile(`(?m)^rust-version\s*=\s*"([^"]+)"\s*$`)
 
 // Rust tracks the toolchain pin in the workspace package manifest.
 type Rust struct {
@@ -22,20 +18,14 @@ type Rust struct {
 func (Rust) Name() string { return "rust" }
 
 func (r Rust) pin() (string, error) {
-	data, err := os.ReadFile(filepath.Join(r.Root, "Cargo.toml"))
+	_, _, manifest, err := readCargo(r.Root)
 	if err != nil {
 		return "", err
 	}
-	section := strings.SplitN(string(data), "[workspace.package]", 2)
-	if len(section) != 2 {
-		return "", fmt.Errorf("Cargo.toml has no [workspace.package] section")
-	}
-	workspace := strings.SplitN(section[1], "\n[", 2)[0]
-	match := workspaceRustVersion.FindStringSubmatch(workspace)
-	if match == nil {
+	if manifest.Workspace.Package.RustVersion == "" {
 		return "", fmt.Errorf("Cargo.toml has no workspace rust-version")
 	}
-	return match[1], nil
+	return manifest.Workspace.Package.RustVersion, nil
 }
 
 func (r Rust) Check(ctx context.Context) ([]Drift, error) {
@@ -76,19 +66,16 @@ func (r Rust) Check(ctx context.Context) ([]Drift, error) {
 }
 
 func (r Rust) Fix(_ context.Context, drift Drift) error {
-	current, err := r.pin()
+	path, data, manifest, err := readCargo(r.Root)
 	if err != nil {
 		return err
 	}
-	if drift.Name != "rust-version" || current != drift.Current {
+	if drift.Name != "rust-version" || manifest.Workspace.Package.RustVersion != drift.Current {
 		return fmt.Errorf("Cargo.toml rust-version changed since check")
 	}
-	path := filepath.Join(r.Root, "Cargo.toml")
-	data, err := os.ReadFile(path)
+	updated, err := replaceCargoVersion(data, "workspace.package", "rust-version", "", drift.Current, drift.Latest)
 	if err != nil {
 		return err
 	}
-	old := `rust-version = "` + drift.Current + `"`
-	newPin := `rust-version = "` + drift.Latest + `"`
-	return os.WriteFile(path, []byte(strings.Replace(string(data), old, newPin, 1)), 0o644)
+	return os.WriteFile(path, updated, 0o644)
 }
