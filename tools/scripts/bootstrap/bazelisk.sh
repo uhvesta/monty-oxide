@@ -50,30 +50,32 @@ destination="$bin_dir/bazelisk"
 
 if [ -f "$destination" ] && [ "$(sha256_file "$destination")" = "$sha256" ]; then
   chmod 0755 "$destination"
-  printf 'Bazelisk %s is already installed at %s\n' "$BAZELISK_VERSION" "$destination"
-  exit 0
+  status='already installed'
+else
+  if ! command -v curl >/dev/null 2>&1; then
+    printf 'curl is required to download Bazelisk.\n' >&2
+    exit 1
+  fi
+
+  mkdir -p "$bin_dir"
+  temporary_file=$(mktemp "$bin_dir/.bazelisk.XXXXXXXX")
+  trap 'rm -f "$temporary_file"' 0
+
+  asset="bazelisk-$os-$arch"
+  url="https://github.com/bazelbuild/bazelisk/releases/download/$BAZELISK_VERSION/$asset"
+  curl --fail --location --silent --show-error --retry 3 --output "$temporary_file" "$url"
+
+  actual_sha256=$(sha256_file "$temporary_file")
+  if [ "$actual_sha256" != "$sha256" ]; then
+    printf 'SHA-256 mismatch for %s\nExpected: %s\nActual:   %s\n' "$asset" "$sha256" "$actual_sha256" >&2
+    exit 1
+  fi
+
+  chmod 0755 "$temporary_file"
+  mv -f "$temporary_file" "$destination"
+  trap - 0
+  status='installed'
 fi
 
-if ! command -v curl >/dev/null 2>&1; then
-  printf 'curl is required to download Bazelisk.\n' >&2
-  exit 1
-fi
-
-mkdir -p "$bin_dir"
-temporary_file=$(mktemp "$bin_dir/.bazelisk.XXXXXXXX")
-trap 'rm -f "$temporary_file"' 0
-
-asset="bazelisk-$os-$arch"
-url="https://github.com/bazelbuild/bazelisk/releases/download/$BAZELISK_VERSION/$asset"
-curl --fail --location --silent --show-error --retry 3 --output "$temporary_file" "$url"
-
-actual_sha256=$(sha256_file "$temporary_file")
-if [ "$actual_sha256" != "$sha256" ]; then
-  printf 'SHA-256 mismatch for %s\nExpected: %s\nActual:   %s\n' "$asset" "$sha256" "$actual_sha256" >&2
-  exit 1
-fi
-
-chmod 0755 "$temporary_file"
-mv -f "$temporary_file" "$destination"
-trap - 0
-printf 'Installed Bazelisk %s at %s\n' "$BAZELISK_VERSION" "$destination"
+ln -sfn bazelisk "$bin_dir/bazel"
+printf 'Bazelisk %s %s at %s\n' "$BAZELISK_VERSION" "$status" "$destination"
