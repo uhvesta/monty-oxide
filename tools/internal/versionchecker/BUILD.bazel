@@ -7,6 +7,7 @@ go_library(
         "bzlmod.go",
         "golang.go",
         "runner.go",
+        "rust.go",
         "source.go",
     ],
     importpath = "github.com/uhvesta/monty-oxide/tools/internal/versionchecker",

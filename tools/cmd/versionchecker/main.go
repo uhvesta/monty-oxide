@@ -19,6 +19,7 @@ func main() {
 		versionchecker.Bazel{Root: root},
 		versionchecker.Bzlmod{Root: root},
 		&versionchecker.Golang{Root: root},
+		versionchecker.Rust{Root: root},
 	}}).Execute(); err != nil {
 		os.Exit(1)
 	}
