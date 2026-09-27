@@ -54,8 +54,9 @@ From the repository root:
 
 Builds run the configured lint aspects for Rust, shell, Markdown, and Starlark
 targets. The formatter handles Rust, Go, shell, Markdown, and Starlark files.
-The `buildifier_format_test` checks the live workspace on every `bazel test`
-run; it is a local test with caching disabled.
+The `format_test` checks the live workspace for Go, Rust, shell, Markdown, and
+Starlark formatting on every `bazel test` run; it is a local test with caching
+disabled.
 
 The Rust compiler version and edition come from the root `Cargo.toml`
 workspace package. The local extension that passes these values to

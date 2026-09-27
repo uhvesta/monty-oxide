@@ -46,10 +46,32 @@ format_multirun(
     starlark = "@buildifier//:buildifier",
 )
 
+# Not hermetic but it's fine
 format_test(
-    name = "buildifier_format_test",
+    name = "format_test",
     size = "small",
+    fix_target = ":format",
+    go = "@aspect_rules_lint//format:gofumpt",
+    markdown = "@rumdl//:rumdl",
+    markdown_check_args = [
+        "fmt",
+        "--check",
+    ],
     no_sandbox = True,
+    rust = "@rules_rust//tools/upstream_wrapper:rustfmt",
+    rust_check_args = [
+        "--edition",
+        RUST_EDITION,
+        "--check",
+    ],
+    shell = "@shfmt//:shfmt",
+    shell_check_args = [
+        "--diff",
+        "--apply-ignore",
+        "-i",
+        "2",
+        "-ci",
+    ],
     starlark = "@buildifier//:buildifier",
     tags = ["local"],
     workspace = "//:MODULE.bazel",
