@@ -3,7 +3,8 @@
 Allow the repository with `direnv allow` to install Bazelisk and run
 `bazel run //tools:install_devtools` automatically. The setup supports macOS
 and Linux on x86-64 and ARM64. Bazel prepares the pinned Go and Rust versions
-and builds `gopls`. The installer copies `gopls` and `starpls` into ignored
+and builds `gopls`. Bazel runs the installer with its pinned Python toolchain;
+the installer copies `gopls` and `starpls` into ignored
 `.tools/bin`. It links `rust-analyzer` and the complete Go and Rust
 distributions under `.tools/sdk` so their libraries and source files remain
 available.
@@ -22,11 +23,24 @@ export RUST_SRC_PATH="$PWD/.tools/sdk/rust-analyzer/lib/rustlib/src/library"
 You can still run only `sh tools/scripts/bootstrap/bazelisk.sh` if you want
 just Bazelisk. `sh tools/scripts/bootstrap/devtools.sh` performs both setup
 steps and reuses the existing installation when its inputs have not changed.
+The shell scripts start Bazel; Bazel runs the Python installer.
 
 The available commands include `bazel`, `go`, `gofmt`, `cargo`, `rustc`,
 `rustfmt`, `gopls`, `rust-analyzer`, and `starpls` (the Starlark/Bazel LSP).
 The Rust version comes from `Cargo.toml`. The Go and `gopls` versions come
 from `go.mod`.
+
+VS Code reads `.vscode/settings.json` to launch these tools from the repository
+even when its extension host did not inherit direnv's `PATH`. The Bazel
+extension launches `starpls` through `tools/scripts/ide/starpls.sh`,
+which adds the repository's Bazelisk to the language server's `PATH`. Run
+`sh tools/scripts/bootstrap/devtools.sh` once after cloning, then reload the
+VS Code window. The workspace also recommends the Go, Rust, and Bazel
+extensions.
+
+The Go and Cargo caches live under ignored `.tools`. Bazel keeps its cache
+outside the checkout so its repository cache cannot conflict with the
+workspace.
 
 From the repository root:
 

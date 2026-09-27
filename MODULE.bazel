@@ -7,8 +7,13 @@ bazel_dep(name = "aspect_rules_lint", version = "2.9.0")
 bazel_dep(name = "aspect_rules_lint_rust", version = "0.0.2")
 bazel_dep(name = "bazel_skylib", version = "1.9.2")
 bazel_dep(name = "rules_shell", version = "0.8.0")
+bazel_dep(name = "rules_python", version = "2.3.4")
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "toml.bzl", version = "0.4.1")
+
+# MARK: - Python
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(python_version = "3.14.4")
 
 # MARK: - Go
 

@@ -1,0 +1,21 @@
+{
+  "bazel.executable": ".tools/bin/bazel",
+  "bazel.lsp.command": "tools/scripts/ide/starpls.sh",
+  "go.alternateTools": {
+    "go": "${workspaceFolder}/.tools/sdk/go/bin/go",
+    "gopls": "${workspaceFolder}/.tools/bin/gopls"
+  },
+  "go.goroot": "${workspaceFolder}/.tools/sdk/go",
+  "go.toolsEnvVars": {
+    "PATH": "${workspaceFolder}/.tools/sdk/go/bin:${env:PATH}",
+    "GOPATH": "${workspaceFolder}/.tools/go",
+    "GOCACHE": "${workspaceFolder}/.tools/cache/go-build",
+    "GOPLSCACHE": "${workspaceFolder}/.tools/cache/gopls"
+  },
+  "rust-analyzer.server.path": "${workspaceFolder}/.tools/bin/rust-analyzer",
+  "rust-analyzer.server.extraEnv": {
+    "PATH": "${workspaceFolder}/.tools/sdk/rust/bin:${workspaceFolder}/.tools/bin:${env:PATH}",
+    "CARGO_HOME": "${workspaceFolder}/.tools/cargo",
+    "RUST_SRC_PATH": "${workspaceFolder}/.tools/sdk/rust-analyzer/lib/rustlib/src/library"
+  }
+}

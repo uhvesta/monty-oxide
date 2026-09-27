@@ -44,8 +44,5 @@ sh_library(
 
 sh_library(
     name = "bootstrap_devtools",
-    srcs = [
-        "//tools:scripts/bootstrap/devtools.sh",
-        "//tools:scripts/bootstrap/install_devtools.sh",
-    ],
+    srcs = ["//tools:scripts/bootstrap/devtools.sh"],
 )

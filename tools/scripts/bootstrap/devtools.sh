@@ -2,6 +2,12 @@
 set -eu
 
 repo_root=$(CDPATH='' cd -P "$(dirname "$0")/../../.." && pwd)
+
+# Older direnv sessions may still put Bazel's XDG cache inside this workspace.
+case "${XDG_CACHE_HOME:-}" in
+  "$repo_root" | "$repo_root"/*) unset XDG_CACHE_HOME ;;
+esac
+
 "$repo_root/tools/scripts/bootstrap/bazelisk.sh" >/dev/null
 
 bazel="$repo_root/.tools/bin/bazel"
@@ -17,7 +23,7 @@ stamp=$(cksum \
   tools/BUILD.bazel tools/rules/rust/toolchain.bzl \
   tools/rules/tooling/extensions.bzl \
   tools/scripts/bootstrap/devtools.sh \
-  tools/scripts/bootstrap/install_devtools.sh)
+  tools/scripts/ide/install_devtools.py)
 stamp="$stamp
 $output_base"
 
