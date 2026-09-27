@@ -1,0 +1,5 @@
+build:lint --aspects=//tools/lint:linters.bzl%buildifier,//tools/lint:linters.bzl%clippy,//tools/lint:linters.bzl%shellcheck,//tools/lint:linters.bzl%vale
+build:lint --@aspect_rules_lint//lint:fail_on_violation
+
+# always lint
+build --config=lint

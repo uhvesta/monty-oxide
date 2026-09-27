@@ -1,4 +1,43 @@
 load("@gazelle//:def.bzl", "gazelle")
+load("@rules_shell//shell:sh_library.bzl", "sh_library")
+
+exports_files([
+    "Cargo.toml",
+    "MODULE.bazel",
+    ".clippy.toml",
+    ".shellcheckrc",
+    ".vale.ini",
+])
 
 # gazelle:prefix github.com/uhvesta/monty-oxide
 gazelle(name = "gazelle")
+
+alias(
+    name = "format",
+    actual = "//tools/format:format",
+)
+
+alias(
+    name = "format.check",
+    actual = "//tools/format:format.check",
+)
+
+filegroup(
+    name = "markdown",
+    srcs = glob(["*.md"]),
+    tags = ["markdown"],
+)
+
+filegroup(
+    name = "starlark",
+    srcs = [
+        "BUILD.bazel",
+        "MODULE.bazel",
+    ],
+    tags = ["starlark"],
+)
+
+sh_library(
+    name = "bootstrap_bazelisk",
+    srcs = ["//tools:scripts/bootstrap/bazelisk.sh"],
+)

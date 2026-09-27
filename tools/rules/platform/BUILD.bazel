@@ -1,0 +1,10 @@
+exports_files(["host.bzl"])
+
+filegroup(
+    name = "starlark",
+    srcs = [
+        "BUILD.bazel",
+        "host.bzl",
+    ],
+    tags = ["starlark"],
+)
