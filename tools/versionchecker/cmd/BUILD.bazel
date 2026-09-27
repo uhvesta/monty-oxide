@@ -12,10 +12,10 @@ go_library(
         "command.go",
         "main.go",
     ],
-    importpath = "github.com/uhvesta/monty-oxide/tools/cmd/versionchecker",
+    importpath = "github.com/uhvesta/monty-oxide/tools/versionchecker/cmd",
     visibility = ["//visibility:private"],
     deps = [
-        "//tools/internal/versionchecker",
+        "//tools/versionchecker/internal:versionchecker",
         "@com_github_spf13_cobra//:cobra",
     ],
 )
@@ -24,5 +24,5 @@ go_test(
     name = "versionchecker_test",
     srcs = ["command_test.go"],
     embed = [":versionchecker_lib"],
-    deps = ["//tools/internal/versionchecker"],
+    deps = ["//tools/versionchecker/internal:versionchecker"],
 )

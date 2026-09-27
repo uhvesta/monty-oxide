@@ -10,8 +10,8 @@ go_library(
         "rust.go",
         "source.go",
     ],
-    importpath = "github.com/uhvesta/monty-oxide/tools/internal/versionchecker",
-    visibility = ["//tools:__subpackages__"],
+    importpath = "github.com/uhvesta/monty-oxide/tools/versionchecker/internal",
+    visibility = ["//tools/versionchecker/cmd:__pkg__"],
 )
 
 go_test(

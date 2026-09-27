@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/uhvesta/monty-oxide/tools/internal/versionchecker"
+	"github.com/uhvesta/monty-oxide/tools/versionchecker/internal"
 )
 
 type testSource struct{ fixed bool }

@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/uhvesta/monty-oxide/tools/internal/versionchecker"
+	"github.com/uhvesta/monty-oxide/tools/versionchecker/internal"
 )
 
 func newCommand(runner versionchecker.Runner) *cobra.Command {

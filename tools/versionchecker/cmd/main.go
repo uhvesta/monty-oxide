@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/uhvesta/monty-oxide/tools/internal/versionchecker"
+	"github.com/uhvesta/monty-oxide/tools/versionchecker/internal"
 )
 
 func main() {

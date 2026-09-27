@@ -22,6 +22,16 @@ alias(
     actual = "//tools/format:format.check",
 )
 
+alias(
+    name = "check-deps",
+    actual = "//tools/versionchecker/cmd:check-deps",
+)
+
+alias(
+    name = "update-deps",
+    actual = "//tools/versionchecker/cmd:update-deps",
+)
+
 filegroup(
     name = "markdown",
     srcs = glob(["*.md"]),
