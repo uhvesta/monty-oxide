@@ -12,13 +12,19 @@ BAZELISK_SHA256_LINUX_ARM64=e20e8b0f4f240091b7a55bf17b9398bd4f40ee70ae0208dff95d
 case "$(uname -s)" in
   Darwin) os=darwin ;;
   Linux) os=linux ;;
-  *) printf 'Unsupported operating system: %s\n' "$(uname -s)" >&2; exit 1 ;;
+  *)
+    printf 'Unsupported operating system: %s\n' "$(uname -s)" >&2
+    exit 1
+    ;;
 esac
 
 case "$(uname -m)" in
-  x86_64|amd64) arch=amd64 ;;
-  arm64|aarch64) arch=arm64 ;;
-  *) printf 'Unsupported architecture: %s\n' "$(uname -m)" >&2; exit 1 ;;
+  x86_64 | amd64) arch=amd64 ;;
+  arm64 | aarch64) arch=arm64 ;;
+  *)
+    printf 'Unsupported architecture: %s\n' "$(uname -m)" >&2
+    exit 1
+    ;;
 esac
 
 case "$os-$arch" in
@@ -44,7 +50,7 @@ sha256_file() {
   fi
 }
 
-repo_root=$(CDPATH= cd -P "$(dirname "$0")/../../.." && pwd)
+repo_root=$(CDPATH='' cd -P "$(dirname "$0")/../../.." && pwd)
 bin_dir="$repo_root/.tools/bin"
 destination="$bin_dir/bazelisk"
 

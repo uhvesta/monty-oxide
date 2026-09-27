@@ -17,10 +17,9 @@ For bash, add this line to `~/.bashrc`:
 eval "$(direnv hook bash)"
 ```
 
-Restart your shell, enter this repository, and run `direnv allow .` once. On entry,
-direnv runs the Bazelisk bootstrap and adds `.tools/bin` to PATH. The `bazel`
-command then runs Bazelisk. Direnv removes that PATH entry when you leave the
-repository. It will ask you to allow the `.envrc` again if that file changes.
+Restart your shell (or source the rc files), enter this repository, and follow
+the prompts to allow the hook. `bazel` is then on your path while you work in
+the repository.
 
 ### Manual bootstrap
 
@@ -30,6 +29,7 @@ From the repository root, run:
 ./tools/scripts/bootstrap/bazelisk.sh
 ```
 
-The script supports macOS and Linux on x86-64 or ARM64. It downloads a pinned
-version of Bazelisk to `.tools/bin/bazelisk` and creates `.tools/bin/bazel` as a
-link to it. Run `.tools/bin/bazel` directly if you do not use direnv.
+1. The script supports macOS and Linux on x86-64 or ARM64.
+2. It downloads a pinned version of Bazelisk to `.tools/bin/bazelisk`.
+3. It creates `.tools/bin/bazel` as a link to it.
+4. Run `.tools/bin/bazel` directly if you do not use `direnv`.
