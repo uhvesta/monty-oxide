@@ -4,6 +4,8 @@ go 1.27.1
 
 tool golang.org/x/tools/gopls
 
+require github.com/spf13/cobra v1.10.2
+
 require (
 	github.com/BurntSushi/toml v1.6.0 // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect
@@ -11,9 +13,11 @@ require (
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/google/jsonschema-go v0.4.3 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/modelcontextprotocol/go-sdk v1.6.0 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
 	github.com/segmentio/encoding v0.5.4 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20260611194520-c48552f49976 // indirect
 	golang.org/x/mod v0.37.0 // indirect

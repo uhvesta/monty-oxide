@@ -1,4 +1,4 @@
-package versions
+package versionchecker
 
 import (
 	"context"
@@ -44,7 +44,8 @@ func (r Runner) run(ctx context.Context, fix bool) ([]Report, error) {
 				continue
 			}
 			if fix {
-				if err := source.Fix(ctx, drift); err != nil {
+				err := source.Fix(ctx, drift)
+				if err != nil {
 					return reports, fmt.Errorf("%s/%s: fix: %w", source.Name(), drift.Name, err)
 				}
 			}

@@ -1,17 +1,17 @@
 load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
-    name = "versions",
+    name = "versionchecker",
     srcs = [
         "runner.go",
         "source.go",
     ],
-    importpath = "github.com/uhvesta/monty-oxide/tools/internal/versions",
+    importpath = "github.com/uhvesta/monty-oxide/tools/internal/versionchecker",
     visibility = ["//tools:__subpackages__"],
 )
 
 go_test(
-    name = "versions_test",
+    name = "versionchecker_test",
     srcs = ["runner_test.go"],
-    embed = [":versions"],
+    embed = [":versionchecker"],
 )

@@ -1,5 +1,5 @@
-// Package versions coordinates checks and upgrades across version sources.
-package versions
+// Package versionchecker coordinates checks and upgrades across version sources.
+package versionchecker
 
 import "context"
 

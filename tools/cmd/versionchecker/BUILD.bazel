@@ -1,0 +1,28 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
+
+go_binary(
+    name = "versionchecker",
+    embed = [":versionchecker_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_library(
+    name = "versionchecker_lib",
+    srcs = [
+        "command.go",
+        "main.go",
+    ],
+    importpath = "github.com/uhvesta/monty-oxide/tools/cmd/versionchecker",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//tools/internal/versionchecker",
+        "@com_github_spf13_cobra//:cobra",
+    ],
+)
+
+go_test(
+    name = "versionchecker_test",
+    srcs = ["command_test.go"],
+    embed = [":versionchecker_lib"],
+    deps = ["//tools/internal/versionchecker"],
+)
