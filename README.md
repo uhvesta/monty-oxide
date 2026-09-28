@@ -7,4 +7,8 @@
 - **Pinned versions:** Go comes from `go.mod`, Rust from `Cargo.toml`, Bazel from `.bazelversion`, and Bazelisk from its bootstrap script.
 - **Build and test:** `bazel build //...` and `bazel test //...`.
 - **Generate Go BUILD files:** `bazel run //:gazelle`.
+- **Version checks:** `bazel run check-deps` reports all drift;
+  `bazel run update-deps` applies it. Scope either with `-- --bazel`,
+  `--bzlmod`, `--golang`, `--gomod`, `--rust`, or `--crates`; `--all`
+  is explicit.
 - **Format:** `bazel run //:format -- path/to/files`; check with `bazel run //:format.check -- path/to/files`.

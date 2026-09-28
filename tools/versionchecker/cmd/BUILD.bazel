@@ -5,9 +5,12 @@ go_binary(
     args = [
         "--go-runfile",
         "$(rlocationpath @go_sdk//:bin/go)",
+        "--cargo-runfile",
+        "$(rlocationpath @rules_rust//rust/toolchain:current_cargo_files)",
     ],
     data = [
         "@go_sdk//:bin/go",
+        "@rules_rust//rust/toolchain:current_cargo_files",
     ],
     embed = [":versionchecker_lib"],
     visibility = ["//visibility:public"],
@@ -18,10 +21,13 @@ go_binary(
     args = [
         "--go-runfile",
         "$(rlocationpath @go_sdk//:bin/go)",
+        "--cargo-runfile",
+        "$(rlocationpath @rules_rust//rust/toolchain:current_cargo_files)",
         "check",
     ],
     data = [
         "@go_sdk//:bin/go",
+        "@rules_rust//rust/toolchain:current_cargo_files",
     ],
     embed = [":versionchecker_lib"],
     visibility = ["//visibility:public"],
@@ -32,10 +38,13 @@ go_binary(
     args = [
         "--go-runfile",
         "$(rlocationpath @go_sdk//:bin/go)",
+        "--cargo-runfile",
+        "$(rlocationpath @rules_rust//rust/toolchain:current_cargo_files)",
         "fix",
     ],
     data = [
         "@go_sdk//:bin/go",
+        "@rules_rust//rust/toolchain:current_cargo_files",
     ],
     embed = [":versionchecker_lib"],
     visibility = ["//visibility:public"],

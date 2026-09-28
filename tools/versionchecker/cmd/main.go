@@ -22,15 +22,18 @@ func main() {
 	}
 	goSource := &versionchecker.Golang{Root: root}
 	bzlmodSource := &versionchecker.Bzlmod{Root: root}
+	crateSource := &versionchecker.Crates{Root: root}
 	command := newCommand(versionchecker.Runner{Sources: []versionchecker.Source{
 		versionchecker.Bazel{Root: root},
 		bzlmodSource,
 		goSource,
 		&versionchecker.Gomod{Go: goSource},
 		versionchecker.Rust{Root: root},
+		crateSource,
 	}})
-	var goRunfile, bazelBinary string
+	var goRunfile, cargoRunfile, bazelBinary string
 	command.PersistentFlags().StringVar(&goRunfile, "go-runfile", "", "Go SDK executable runfile")
+	command.PersistentFlags().StringVar(&cargoRunfile, "cargo-runfile", "", "Cargo SDK executable runfile")
 	command.PersistentFlags().StringVar(&bazelBinary, "bazel-bin", "bazel", "Bazel executable for lockfile updates")
 	command.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
 		if goRunfile == "" {
@@ -41,8 +44,12 @@ func main() {
 		if err != nil {
 			return err
 		}
+		if cargoRunfile == "" {
+			return fmt.Errorf("--cargo-runfile is required")
+		}
+		crateSource.CargoBinary, err = resolveRunfile(cargoRunfile)
 		bzlmodSource.BazelBinary = bazelBinary
-		return nil
+		return err
 	}
 	if err := command.Execute(); err != nil {
 		os.Exit(1)
