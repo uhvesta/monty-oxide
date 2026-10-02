@@ -1,8 +1,6 @@
 load("@aspect_rules_lint//format:defs.bzl", "format_multirun", "format_test")
 load("@rust_metadata//:edition.bzl", "RUST_EDITION")
 
-package(default_visibility = ["//visibility:public"])
-
 filegroup(
     name = "starlark",
     srcs = ["BUILD.bazel"],
@@ -44,6 +42,7 @@ format_multirun(
         "-ci",
     ],
     starlark = "@buildifier//:buildifier",
+    visibility = ["//:__pkg__"],
 )
 
 # Not hermetic but it's fine

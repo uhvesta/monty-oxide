@@ -1,13 +1,24 @@
 load("@gazelle//:def.bzl", "gazelle")
 load("@rules_shell//shell:sh_library.bzl", "sh_library")
 
-exports_files([
-    "Cargo.toml",
-    "MODULE.bazel",
-    ".clippy.toml",
-    ".shellcheckrc",
-    ".vale.ini",
-])
+exports_files(
+    ["Cargo.toml"],
+    visibility = ["//tools/rules/rust:__pkg__"],
+)
+
+exports_files(
+    ["MODULE.bazel"],
+    visibility = ["//tools/format:__pkg__"],
+)
+
+exports_files(
+    [
+        ".clippy.toml",
+        ".shellcheckrc",
+        ".vale.ini",
+    ],
+    visibility = ["//tools/lint:__pkg__"],
+)
 
 # gazelle:prefix github.com/uhvesta/monty-oxide
 gazelle(name = "gazelle")

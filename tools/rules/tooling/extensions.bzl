@@ -45,12 +45,13 @@ _STARPLS = {
 
 def _archive_tool_impl(ctx):
     ctx.download_and_extract(url = ctx.attr.url, sha256 = ctx.attr.sha256)
-    ctx.file("BUILD.bazel", 'exports_files(["{}"], visibility = ["//visibility:public"])\n'.format(ctx.attr.binary))
+    ctx.file("BUILD.bazel", 'exports_files(["{}"], visibility = {})\n'.format(ctx.attr.binary, repr(ctx.attr.export_visibility)))
 
 _archive_tool = repository_rule(
     implementation = _archive_tool_impl,
     attrs = {
         "binary": attr.string(mandatory = True),
+        "export_visibility": attr.string_list(mandatory = True),
         "sha256": attr.string(mandatory = True),
         "url": attr.string(mandatory = True),
     },
@@ -58,12 +59,13 @@ _archive_tool = repository_rule(
 
 def _binary_tool_impl(ctx):
     ctx.download(url = ctx.attr.url, output = ctx.attr.binary, sha256 = ctx.attr.sha256, executable = True)
-    ctx.file("BUILD.bazel", 'exports_files(["{}"], visibility = ["//visibility:public"])\n'.format(ctx.attr.binary))
+    ctx.file("BUILD.bazel", 'exports_files(["{}"], visibility = {})\n'.format(ctx.attr.binary, repr(ctx.attr.export_visibility)))
 
 _binary_tool = repository_rule(
     implementation = _binary_tool_impl,
     attrs = {
         "binary": attr.string(mandatory = True),
+        "export_visibility": attr.string_list(mandatory = True),
         "sha256": attr.string(mandatory = True),
         "url": attr.string(mandatory = True),
     },
@@ -81,30 +83,35 @@ def _host_tools_impl(module_ctx):
         url = "https://github.com/vale-cli/vale/releases/download/v{0}/vale_{0}_{1}.tar.gz".format(_VALE_VERSION, vale_platform),
         sha256 = vale_sha,
         binary = "vale",
+        export_visibility = ["@//tools/lint:__pkg__"],
     )
     _archive_tool(
         name = "rumdl",
         url = "https://github.com/rvben/rumdl/releases/download/v{0}/rumdl-v{0}-{1}.tar.gz".format(_RUMDL_VERSION, rumdl_platform),
         sha256 = rumdl_sha,
         binary = "rumdl",
+        export_visibility = ["@//tools/format:__pkg__"],
     )
     _binary_tool(
         name = "shfmt",
         url = "https://github.com/mvdan/sh/releases/download/v{0}/shfmt_v{0}_{1}".format(_SHFMT_VERSION, shfmt_platform),
         sha256 = shfmt_sha,
         binary = "shfmt",
+        export_visibility = ["@//tools/format:__pkg__"],
     )
     _binary_tool(
         name = "buildifier",
         url = "https://github.com/bazelbuild/buildtools/releases/download/v{0}/buildifier-{1}".format(_BUILDIFIER_VERSION, host_key.replace("_", "-")),
         sha256 = _BUILDIFIER[host_key],
         binary = "buildifier",
+        export_visibility = ["@//:__subpackages__"],
     )
     _binary_tool(
         name = "starpls",
         url = "https://github.com/withered-magic/starpls/releases/download/v{0}/starpls-{1}".format(_STARPLS_VERSION, starpls_platform),
         sha256 = starpls_sha,
         binary = "starpls",
+        export_visibility = ["@//tools:__pkg__"],
     )
     return module_ctx.extension_metadata(reproducible = True)
 

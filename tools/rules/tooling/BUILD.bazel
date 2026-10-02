@@ -1,4 +1,7 @@
-exports_files(["extensions.bzl"])
+exports_files(
+    ["extensions.bzl"],
+    visibility = ["//:__pkg__"],
+)
 
 filegroup(
     name = "starlark",

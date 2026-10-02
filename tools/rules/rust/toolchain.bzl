@@ -12,7 +12,7 @@ _TOOLCHAIN_TRIPLES = {
 }
 
 def _rust_metadata_impl(repository_ctx):
-    repository_ctx.file("BUILD.bazel", 'exports_files(["edition.bzl"])')
+    repository_ctx.file("BUILD.bazel", 'exports_files(["edition.bzl"], visibility = ["@//tools/format:__pkg__"])\n')
     repository_ctx.file("edition.bzl", 'RUST_EDITION = "{}"\n'.format(repository_ctx.attr.edition))
 
 _rust_metadata = repository_rule(

@@ -1,4 +1,7 @@
-exports_files(["toolchain.bzl"])
+exports_files(
+    ["toolchain.bzl"],
+    visibility = ["//:__pkg__"],
+)
 
 filegroup(
     name = "starlark",

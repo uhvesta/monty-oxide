@@ -13,7 +13,6 @@ go_binary(
         "@rules_rust//rust/toolchain:current_cargo_files",
     ],
     embed = [":versionchecker_lib"],
-    visibility = ["//visibility:public"],
 )
 
 go_binary(
@@ -30,7 +29,7 @@ go_binary(
         "@rules_rust//rust/toolchain:current_cargo_files",
     ],
     embed = [":versionchecker_lib"],
-    visibility = ["//visibility:public"],
+    visibility = ["//:__pkg__"],
 )
 
 go_binary(
@@ -47,7 +46,7 @@ go_binary(
         "@rules_rust//rust/toolchain:current_cargo_files",
     ],
     embed = [":versionchecker_lib"],
-    visibility = ["//visibility:public"],
+    visibility = ["//:__pkg__"],
 )
 
 go_library(
@@ -57,7 +56,6 @@ go_library(
         "main.go",
     ],
     importpath = "github.com/uhvesta/monty-oxide/tools/versionchecker/cmd",
-    visibility = ["//visibility:private"],
     deps = [
         "//tools/versionchecker/internal:versionchecker",
         "@com_github_spf13_cobra//:cobra",

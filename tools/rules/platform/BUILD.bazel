@@ -1,4 +1,10 @@
-exports_files(["host.bzl"])
+exports_files(
+    ["host.bzl"],
+    visibility = [
+        "//tools/rules/rust:__pkg__",
+        "//tools/rules/tooling:__pkg__",
+    ],
+)
 
 filegroup(
     name = "starlark",
